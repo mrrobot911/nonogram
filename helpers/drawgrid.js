@@ -3,7 +3,8 @@ export default function drawGrid(
   context,
   cellSize,
   gridColors,
-  TITLE_SIZE
+  TITLE_SIZE,
+  arr
 ) {
   const CELL_COUNT_X = Math.floor((canvas.width - TITLE_SIZE) / cellSize);
   const CELL_COUNT_Y = Math.floor((canvas.height - TITLE_SIZE) / cellSize);
@@ -14,21 +15,41 @@ export default function drawGrid(
 
   // Отрисовка подсказок по строкам
   for (let i = 0; i < CELL_COUNT_X; i += 1) {
-    const hint = '1 1 1 1';
+    let count = 0;
+    const hint = [];
+    for (let j = 0; j < CELL_COUNT_Y; j += 1) {
+      if (arr[i][j] === 1) {
+        count += 1;
+      }
+      if (count > 0) {
+        hint.push(count);
+        count = 0;
+      }
+    }
     const x = (i + 1) * cellSize + TITLE_SIZE - 20;
-    const y = cellSize / 2;
+    const y = cellSize / 4;
 
-    hint.split(' ').forEach((part, index) => {
+    hint.forEach((part, index) => {
       context.fillText(part, x, y + index * 15);
     });
   }
 
   for (let j = 0; j < CELL_COUNT_Y; j += 1) {
-    const hint = '2 2 2 2';
+    let count = 0;
+    const hint = [];
+    for (let i = 0; i < CELL_COUNT_X; i += 1) {
+      if (arr[i][j] === 1) {
+        count += 1;
+      }
+      if (count > 0) {
+        hint.push(count);
+        count = 0;
+      }
+    }
     const x = 5;
     const y = (j + 1) * cellSize + TITLE_SIZE - 10;
 
-    context.fillText(hint, x, y);
+    context.fillText(hint.join(' '), x, y);
   }
 
   // Отрисовка линий между подсказками
@@ -82,7 +103,11 @@ export default function drawGrid(
       context.stroke();
       if (x < canvas.width && y < canvas.height) {
         context.fillStyle =
-          gridColors[(x - TITLE_SIZE) / cellSize][(y - TITLE_SIZE) / cellSize];
+          gridColors[(x - TITLE_SIZE) / cellSize][
+            (y - TITLE_SIZE) / cellSize
+          ] === 1
+            ? '#000000'
+            : '#ffffff';
         context.fillRect(x, y, cellSize, cellSize);
       }
       context.lineWidth = 1;
