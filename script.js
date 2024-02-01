@@ -6,12 +6,12 @@ document.body.appendChild(canvasContainer);
 
 const canvas = document.createElement('canvas');
 canvas.id = 'gridCanvas';
-canvas.width = 400;
-canvas.height = 400;
+canvas.width = 630;
+canvas.height = 630;
 canvasContainer.append(canvas);
 
 const context = canvas.getContext('2d');
-const cellSize = 20;
+const cellSize = 30;
 const gridColors = [];
 
 for (let i = 0; i < canvas.width / cellSize; i += 1) {
