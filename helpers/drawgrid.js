@@ -1,5 +1,10 @@
-export default function drawGrid(canvas, context, cellSize, gridColors) {
-  const TITLE_SIZE = 30;
+export default function drawGrid(
+  canvas,
+  context,
+  cellSize,
+  gridColors,
+  TITLE_SIZE
+) {
   const CELL_COUNT_X = Math.floor((canvas.width - TITLE_SIZE) / cellSize);
   const CELL_COUNT_Y = Math.floor((canvas.height - TITLE_SIZE) / cellSize);
 
@@ -7,31 +12,33 @@ export default function drawGrid(canvas, context, cellSize, gridColors) {
   context.fillStyle = 'black';
   context.font = 'bold 14px Arial';
 
+  // Отрисовка подсказок по строкам
   for (let i = 0; i < CELL_COUNT_X; i += 1) {
-    for (let j = 0; j < CELL_COUNT_X; j += 1) {
-      const hint = '1';
-      const x = (i + 1) * cellSize + 10;
-      const y = cellSize / 2;
+    const hint = '1 1 1 1';
+    const x = (i + 1) * cellSize + TITLE_SIZE - 20;
+    const y = cellSize / 2;
 
-      context.fillText(hint, x, y);
-    }
+    hint.split(' ').forEach((part, index) => {
+      context.fillText(part, x, y + index * 15);
+    });
   }
 
-  // Отрисовка подсказок по строкам (слева)
-  for (let i = 0; i < CELL_COUNT_Y; i += 1) {
-    for (let j = 0; j < CELL_COUNT_Y; j += 1) {
-      const hint = '2';
-      const x = j * cellSize + 10;
-      const y = (i + 1) * cellSize + TITLE_SIZE - 10;
+  for (let j = 0; j < CELL_COUNT_Y; j += 1) {
+    const hint = '2 2 2 2';
+    const x = 5;
+    const y = (j + 1) * cellSize + TITLE_SIZE - 10;
 
-      context.fillText(hint, x, y);
-    }
+    context.fillText(hint, x, y);
   }
+
   // Отрисовка линий между подсказками
   for (let i = 0; i <= CELL_COUNT_X + 1; i += 1) {
     context.beginPath();
-    context.moveTo(i * TITLE_SIZE, 0);
-    context.lineTo(i * TITLE_SIZE, canvas.height);
+    context.moveTo(i === 0 ? 0 : cellSize * (i - 1) + TITLE_SIZE, 0);
+    context.lineTo(
+      i === 0 ? 0 : cellSize * (i - 1) + TITLE_SIZE,
+      canvas.height
+    );
     context.lineWidth = 3;
     context.strokeStyle = '#ccc';
     context.stroke();
@@ -39,8 +46,8 @@ export default function drawGrid(canvas, context, cellSize, gridColors) {
 
   for (let i = 0; i <= CELL_COUNT_Y + 1; i += 1) {
     context.beginPath();
-    context.moveTo(0, i * TITLE_SIZE);
-    context.lineTo(canvas.width, i * TITLE_SIZE);
+    context.moveTo(0, i === 0 ? 0 : cellSize * (i - 1) + TITLE_SIZE);
+    context.lineTo(canvas.width, i === 0 ? 0 : cellSize * (i - 1) + TITLE_SIZE);
     context.lineWidth = 3;
     context.strokeStyle = '#ccc';
     context.stroke();
@@ -73,9 +80,9 @@ export default function drawGrid(canvas, context, cellSize, gridColors) {
         context.strokeStyle = '#ccc';
       }
       context.stroke();
-
       if (x < canvas.width && y < canvas.height) {
-        context.fillStyle = gridColors[x / cellSize][y / cellSize];
+        context.fillStyle =
+          gridColors[(x - TITLE_SIZE) / cellSize][(y - TITLE_SIZE) / cellSize];
         context.fillRect(x, y, cellSize, cellSize);
       }
       context.lineWidth = 1;
