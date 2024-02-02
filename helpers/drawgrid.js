@@ -21,7 +21,10 @@ export default function drawGrid(
       if (arr[i][j] === 1) {
         count += 1;
       }
-      if (count > 0) {
+      if (
+        (count > 0 && arr[i][j] === 0) ||
+        (count > 0 && j === CELL_COUNT_Y - 1)
+      ) {
         hint.push(count);
         count = 0;
       }
@@ -41,7 +44,10 @@ export default function drawGrid(
       if (arr[i][j] === 1) {
         count += 1;
       }
-      if (count > 0) {
+      if (
+        (count > 0 && arr[i][j] === 0) ||
+        (count > 0 && i === CELL_COUNT_Y - 1)
+      ) {
         hint.push(count);
         count = 0;
       }
