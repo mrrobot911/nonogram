@@ -11,7 +11,8 @@ export default function drawGrid(
 
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.fillStyle = 'black';
-  context.font = 'bold 14px Arial';
+
+  context.font = `bold 16px Arial`;
 
   // Отрисовка подсказок по строкам
   for (let i = 0; i < CELL_COUNT_X; i += 1) {
@@ -29,11 +30,11 @@ export default function drawGrid(
         count = 0;
       }
     }
-    const x = (i + 1) * cellSize + TITLE_SIZE - 20;
-    const y = cellSize / 4;
+    const x = (i + 1) * cellSize + TITLE_SIZE - cellSize / 2;
+    const y = 20;
 
     hint.forEach((part, index) => {
-      context.fillText(part, x, y + index * 15);
+      context.fillText(part, x, y + index * 16);
     });
   }
 
@@ -52,8 +53,8 @@ export default function drawGrid(
         count = 0;
       }
     }
-    const x = 5;
-    const y = (j + 1) * cellSize + TITLE_SIZE - 10;
+    const x = cellSize / 10;
+    const y = (j + 1) * cellSize + TITLE_SIZE - cellSize / 2;
 
     context.fillText(hint.join(' '), x, y);
   }
@@ -108,13 +109,36 @@ export default function drawGrid(
       }
       context.stroke();
       if (x < canvas.width && y < canvas.height) {
-        context.fillStyle =
+        if (
           gridColors[(x - TITLE_SIZE) / cellSize][
             (y - TITLE_SIZE) / cellSize
           ] === 1
-            ? '#000000'
-            : '#ffffff';
-        context.fillRect(x, y, cellSize, cellSize);
+        ) {
+          context.fillStyle = '#000000';
+          context.fillRect(x, y, cellSize, cellSize);
+        } else if (
+          gridColors[(x - TITLE_SIZE) / cellSize][
+            (y - TITLE_SIZE) / cellSize
+          ] === 2
+        ) {
+          context.fillStyle = '#ffffff';
+          context.fillRect(x, y, cellSize, cellSize);
+          context.lineWidth = 2;
+          context.strokeStyle = '#000000';
+          context.fillRect(x, y, cellSize, cellSize);
+          context.beginPath();
+          context.moveTo(x, y);
+          context.lineTo(x + cellSize, y + cellSize);
+          context.stroke();
+
+          context.beginPath();
+          context.moveTo(x, y + cellSize);
+          context.lineTo(x + cellSize, y);
+          context.stroke();
+        } else {
+          context.fillStyle = '#ffffff';
+          context.fillRect(x, y, cellSize, cellSize);
+        }
       }
       context.lineWidth = 1;
       context.strokeStyle = '#ccc';

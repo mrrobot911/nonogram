@@ -1,10 +1,41 @@
 .bodyEl {
   max-width: 1440px;
-  margin: 0px auto;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url('../assets/fudzi.jpeg') center center no-repeat fixed;
+  background-size: cover;
 }
 .canvasContainer {
-  margin-top: 100px;
+  position: relative;
+  margin: 0 15px;
+  padding: 50px 200px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: rgba(220, 220, 220, 0.3);
+  border-radius: 30px;
+}
+.canvasContainer::after {
+  background-color: rgba(190, 190, 190, 0.25);
+  top: 30px;
+  bottom: 30px;
+  left: 30px;
+  right: 30px;
+  content: '';
+  filter: blur(32px);
+  opacity: 0.4;
+  position: absolute;
+  z-index: -1;
+}
+@media (max-width: 1100px) {
+  .canvasContainer {
+    padding: 50px 120px;
+  }
+}
+@media (max-width: 620px) {
+  .canvasContainer {
+    padding: 30px 60px;
+  }
 }
