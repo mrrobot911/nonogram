@@ -1,9 +1,46 @@
-import drawGrid from './helpers/drawgrid.js';
+import render from './helpers/render.js';
 import isMatrixEqual from './helpers/equal.js';
-import arr from './helpers/solution.js';
+import solutions from './helpers/solution.js';
 
-const CELL_COUNT = 5;
 let canvasSize;
+const TITLE_SIZE = 70;
+const gridColors = [];
+const cellCount = 5;
+let solutionArr = solutions.empty;
+
+const canvasContainer = document.createElement('section');
+canvasContainer.className = 'canvasContainer';
+document.body.appendChild(canvasContainer);
+
+const canvas = document.createElement('canvas');
+canvas.id = 'gridCanvas';
+canvas.width = canvasSize + TITLE_SIZE;
+canvas.height = canvasSize + TITLE_SIZE;
+const controlsContainer = document.createElement('div');
+controlsContainer.className = 'controlsContainer';
+const restartBtn = document.createElement('button');
+restartBtn.textContent = 'Resturt Game';
+const playBtn = document.createElement('button');
+playBtn.textContent = 'Start Game';
+const templateSelect = document.createElement('select');
+const defaultOption = document.createElement('option');
+defaultOption.value = solutions.empty;
+defaultOption.text = 'Выберите шаблон';
+defaultOption.selected = true;
+defaultOption.disabled = true;
+templateSelect.append(defaultOption);
+const templates = solutions.easy;
+
+templates.forEach((_, index) => {
+  const option = document.createElement('option');
+  option.value = index;
+  option.text = index + 1;
+  templateSelect.append(option);
+});
+
+controlsContainer.append(playBtn, restartBtn, templateSelect);
+canvasContainer.append(canvas, controlsContainer);
+const context = canvas.getContext('2d');
 
 if (window.innerWidth < 950) {
   if (window.innerWidth < 750) {
@@ -18,27 +55,16 @@ if (window.innerWidth < 950) {
 } else {
   canvasSize = 600;
 }
-let cellSize = canvasSize / CELL_COUNT;
-const TITLE_SIZE = 70;
-const gridColors = [];
-
-const canvasContainer = document.createElement('section');
-canvasContainer.className = 'canvasContainer';
-document.body.appendChild(canvasContainer);
-
-const canvas = document.createElement('canvas');
-canvas.id = 'gridCanvas';
 canvas.width = canvasSize + TITLE_SIZE;
 canvas.height = canvasSize + TITLE_SIZE;
-canvasContainer.append(canvas);
+let cellSize = canvasSize / cellCount;
 
-const context = canvas.getContext('2d');
 function resizeCanvas(size) {
   canvasSize = size;
-  cellSize = canvasSize / CELL_COUNT;
+  cellSize = canvasSize / cellCount;
   canvas.width = canvasSize + TITLE_SIZE;
   canvas.height = canvasSize + TITLE_SIZE;
-  drawGrid(canvas, context, cellSize, gridColors, TITLE_SIZE, arr);
+  render(canvas, context, cellSize, gridColors, TITLE_SIZE, solutionArr);
 }
 function updateCanvasSize() {
   if (window.innerWidth <= 580) {
@@ -55,14 +81,7 @@ function updateCanvasSize() {
   }
 }
 
-for (let i = 0; i < (canvas.width - TITLE_SIZE) / cellSize; i += 1) {
-  gridColors[i] = [];
-  for (let j = 0; j < (canvas.height - TITLE_SIZE) / cellSize; j += 1) {
-    gridColors[i][j] = 0;
-  }
-}
-
-function handleMouseClick(event) {
+const handleMouseClick = (event) => {
   const mouseX = event.clientX - canvas.getBoundingClientRect().left;
   const mouseY = event.clientY - canvas.getBoundingClientRect().top;
 
@@ -76,12 +95,11 @@ function handleMouseClick(event) {
       gridColors[gridX][gridY] = 0;
     }
   }
-  drawGrid(canvas, context, cellSize, gridColors, TITLE_SIZE, arr);
-  const win = isMatrixEqual(gridColors, arr);
+  render(canvas, context, cellSize, gridColors, TITLE_SIZE, solutionArr);
+  const win = isMatrixEqual(gridColors, solutionArr);
   if (win) alert('You win!');
-}
-canvas.addEventListener('click', handleMouseClick);
-canvas.addEventListener('contextmenu', (event) => {
+};
+const handleContextMenu = (event) => {
   event.preventDefault();
   const mouseX = event.clientX - canvas.getBoundingClientRect().left;
   const mouseY = event.clientY - canvas.getBoundingClientRect().top;
@@ -95,9 +113,33 @@ canvas.addEventListener('contextmenu', (event) => {
       gridColors[gridX][gridY] = 0;
     }
   }
-  drawGrid(canvas, context, cellSize, gridColors, TITLE_SIZE, arr);
-  console.log(gridColors);
-});
+  render(canvas, context, cellSize, gridColors, TITLE_SIZE, solutionArr);
+};
+const clearGrid = () => {
+  for (let i = 0; i < (canvas.width - TITLE_SIZE) / cellSize; i += 1) {
+    gridColors[i] = [];
+    for (let j = 0; j < (canvas.height - TITLE_SIZE) / cellSize; j += 1) {
+      gridColors[i][j] = 0;
+    }
+  }
+};
+
+function StartGame(arr = solutions.empty) {
+  solutionArr = arr;
+  clearGrid();
+  render(canvas, context, cellSize, gridColors, TITLE_SIZE, arr);
+}
+
+canvas.addEventListener('click', handleMouseClick);
+canvas.addEventListener('contextmenu', handleContextMenu);
 window.addEventListener('resize', updateCanvasSize);
 
-drawGrid(canvas, context, cellSize, gridColors, TITLE_SIZE, arr);
+playBtn.addEventListener('click', () => {
+  StartGame(solutions.easy[templateSelect.value]);
+});
+restartBtn.addEventListener('click', () => {
+  clearGrid();
+  render(canvas, context, cellSize, gridColors, TITLE_SIZE, solutionArr);
+});
+
+StartGame(solutions.empty);

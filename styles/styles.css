@@ -29,6 +29,10 @@
   position: absolute;
   z-index: -1;
 }
+.controlsContainer {
+  display: flex;
+  flex-direction: column;
+}
 #gridCanvas {
   background-color: rgb(240, 240, 240);
 }

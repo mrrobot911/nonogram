@@ -1,4 +1,4 @@
-export default function drawGrid(
+export default function render(
   canvas,
   context,
   cellSize,
