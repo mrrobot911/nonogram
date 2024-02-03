@@ -33,6 +33,11 @@
   display: flex;
   flex-direction: column;
 }
+.selectContainer {
+  display: flex;
+  flex-direction: column;
+  margin: 20px 0px;
+}
 #gridCanvas {
   background-color: rgb(240, 240, 240);
 }

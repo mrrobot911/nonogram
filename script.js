@@ -10,7 +10,7 @@ let cellCount = 5;
 let solutionArr = solutions.empty[0].empty;
 let gameBegin = false;
 const lvl = ['easy', 'medium', 'hard'];
-let matrix = 'empty 0';
+let matrix = '';
 
 const canvasContainer = document.createElement('section');
 canvasContainer.className = 'canvasContainer';
@@ -32,6 +32,8 @@ controlsContainer.append(playBtn, restartBtn);
 const templateSelect1 = document.createElement('select');
 const templateSelect2 = document.createElement('select');
 const templateSelect3 = document.createElement('select');
+const selectContainer = document.createElement('div');
+selectContainer.className = 'selectContainer';
 const selectors = [templateSelect1, templateSelect2, templateSelect3];
 
 lvl.forEach((item, i) => {
@@ -70,9 +72,12 @@ lvl.forEach((item, i) => {
       titleSize = 70;
     }
   });
-  controlsContainer.append(templateSelect);
+  selectContainer.append(templateSelect);
 });
-
+controlsContainer.append(selectContainer);
+const showAnswerBtn = document.createElement('button');
+showAnswerBtn.textContent = 'Show Answer';
+controlsContainer.append(showAnswerBtn);
 canvasContainer.append(canvas, controlsContainer);
 const context = canvas.getContext('2d');
 
@@ -132,7 +137,10 @@ const handleMouseClick = (event) => {
     }
     render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
     const win = isMatrixEqual(gridColors, solutionArr);
-    if (win) alert('You win!');
+    if (win) {
+      alert('You win!');
+      gameBegin = false;
+    }
   }
 };
 const handleContextMenu = (event) => {
@@ -184,8 +192,13 @@ playBtn.addEventListener('click', () => {
 });
 restartBtn.addEventListener('click', () => {
   clearGrid();
+  gameBegin = true;
   render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
 });
-
+showAnswerBtn.addEventListener('click', () => {
+  gridColors = solutionArr;
+  render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
+  gameBegin = false;
+});
 clearGrid();
 render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
