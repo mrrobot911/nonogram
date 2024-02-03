@@ -7,6 +7,8 @@ const TITLE_SIZE = 70;
 const gridColors = [];
 const cellCount = 5;
 let solutionArr = solutions.empty;
+let gameBegin = false;
+// let matrixAddr = 'empty 0';
 
 const canvasContainer = document.createElement('section');
 canvasContainer.className = 'canvasContainer';
@@ -24,8 +26,8 @@ const playBtn = document.createElement('button');
 playBtn.textContent = 'Start Game';
 const templateSelect = document.createElement('select');
 const defaultOption = document.createElement('option');
-defaultOption.value = solutions.empty;
-defaultOption.text = 'Выберите шаблон';
+defaultOption.value = '';
+defaultOption.text = 'Easy';
 defaultOption.selected = true;
 defaultOption.disabled = true;
 templateSelect.append(defaultOption);
@@ -33,7 +35,7 @@ const templates = solutions.easy;
 
 templates.forEach((_, index) => {
   const option = document.createElement('option');
-  option.value = index;
+  option.value = `easy ${index}`;
   option.text = index + 1;
   templateSelect.append(option);
 });
@@ -55,6 +57,7 @@ if (window.innerWidth < 950) {
 } else {
   canvasSize = 600;
 }
+
 canvas.width = canvasSize + TITLE_SIZE;
 canvas.height = canvasSize + TITLE_SIZE;
 let cellSize = canvasSize / cellCount;
@@ -82,38 +85,42 @@ function updateCanvasSize() {
 }
 
 const handleMouseClick = (event) => {
-  const mouseX = event.clientX - canvas.getBoundingClientRect().left;
-  const mouseY = event.clientY - canvas.getBoundingClientRect().top;
+  if (gameBegin) {
+    const mouseX = event.clientX - canvas.getBoundingClientRect().left;
+    const mouseY = event.clientY - canvas.getBoundingClientRect().top;
 
-  const gridX = Math.floor((mouseX - TITLE_SIZE) / cellSize);
-  const gridY = Math.floor((mouseY - TITLE_SIZE) / cellSize);
+    const gridX = Math.floor((mouseX - TITLE_SIZE) / cellSize);
+    const gridY = Math.floor((mouseY - TITLE_SIZE) / cellSize);
 
-  if (gridX >= 0 && gridY >= 0) {
-    if (gridColors[gridX][gridY] === 0 || gridColors[gridX][gridY] === 2) {
-      gridColors[gridX][gridY] = 1;
-    } else if (gridColors[gridX][gridY] === 1) {
-      gridColors[gridX][gridY] = 0;
+    if (gridX >= 0 && gridY >= 0) {
+      if (gridColors[gridX][gridY] === 0 || gridColors[gridX][gridY] === 2) {
+        gridColors[gridX][gridY] = 1;
+      } else if (gridColors[gridX][gridY] === 1) {
+        gridColors[gridX][gridY] = 0;
+      }
     }
+    render(canvas, context, cellSize, gridColors, TITLE_SIZE, solutionArr);
+    const win = isMatrixEqual(gridColors, solutionArr);
+    if (win) alert('You win!');
   }
-  render(canvas, context, cellSize, gridColors, TITLE_SIZE, solutionArr);
-  const win = isMatrixEqual(gridColors, solutionArr);
-  if (win) alert('You win!');
 };
 const handleContextMenu = (event) => {
   event.preventDefault();
-  const mouseX = event.clientX - canvas.getBoundingClientRect().left;
-  const mouseY = event.clientY - canvas.getBoundingClientRect().top;
+  if (gameBegin) {
+    const mouseX = event.clientX - canvas.getBoundingClientRect().left;
+    const mouseY = event.clientY - canvas.getBoundingClientRect().top;
 
-  const gridX = Math.floor((mouseX - TITLE_SIZE) / cellSize);
-  const gridY = Math.floor((mouseY - TITLE_SIZE) / cellSize);
-  if (gridX >= 0 && gridY >= 0) {
-    if (gridColors[gridX][gridY] === 0 || gridColors[gridX][gridY] === 1) {
-      gridColors[gridX][gridY] = 2;
-    } else if (gridColors[gridX][gridY] === 2) {
-      gridColors[gridX][gridY] = 0;
+    const gridX = Math.floor((mouseX - TITLE_SIZE) / cellSize);
+    const gridY = Math.floor((mouseY - TITLE_SIZE) / cellSize);
+    if (gridX >= 0 && gridY >= 0) {
+      if (gridColors[gridX][gridY] === 0 || gridColors[gridX][gridY] === 1) {
+        gridColors[gridX][gridY] = 2;
+      } else if (gridColors[gridX][gridY] === 2) {
+        gridColors[gridX][gridY] = 0;
+      }
     }
+    render(canvas, context, cellSize, gridColors, TITLE_SIZE, solutionArr);
   }
-  render(canvas, context, cellSize, gridColors, TITLE_SIZE, solutionArr);
 };
 const clearGrid = () => {
   for (let i = 0; i < (canvas.width - TITLE_SIZE) / cellSize; i += 1) {
@@ -124,10 +131,14 @@ const clearGrid = () => {
   }
 };
 
-function StartGame(arr = solutions.empty) {
-  solutionArr = arr;
-  clearGrid();
-  render(canvas, context, cellSize, gridColors, TITLE_SIZE, arr);
+function StartGame(value) {
+  if (value) {
+    const arr = solutions[value.split(' ')[0]][value.split(' ')[1]];
+    gameBegin = true;
+    solutionArr = arr;
+    clearGrid();
+    render(canvas, context, cellSize, gridColors, TITLE_SIZE, arr);
+  }
 }
 
 canvas.addEventListener('click', handleMouseClick);
@@ -135,11 +146,12 @@ canvas.addEventListener('contextmenu', handleContextMenu);
 window.addEventListener('resize', updateCanvasSize);
 
 playBtn.addEventListener('click', () => {
-  StartGame(solutions.easy[templateSelect.value]);
+  StartGame(templateSelect.value);
 });
 restartBtn.addEventListener('click', () => {
   clearGrid();
   render(canvas, context, cellSize, gridColors, TITLE_SIZE, solutionArr);
 });
 
-StartGame(solutions.empty);
+clearGrid();
+render(canvas, context, cellSize, gridColors, TITLE_SIZE, solutionArr);
