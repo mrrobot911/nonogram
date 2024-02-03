@@ -29,6 +29,9 @@
   position: absolute;
   z-index: -1;
 }
+#gridCanvas {
+  background-color: rgb(240, 240, 240);
+}
 @media (max-width: 1100px) {
   .canvasContainer {
     padding: 50px 120px;

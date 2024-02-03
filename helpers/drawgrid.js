@@ -10,7 +10,7 @@ export default function drawGrid(
   const CELL_COUNT_Y = Math.floor((canvas.height - TITLE_SIZE) / cellSize);
 
   context.clearRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = 'black';
+  context.fillStyle = '#000000';
 
   context.font = `bold 16px Arial`;
 
@@ -123,17 +123,18 @@ export default function drawGrid(
         ) {
           context.fillStyle = '#ffffff';
           context.fillRect(x, y, cellSize, cellSize);
-          context.lineWidth = 2;
+          context.lineWidth = 4;
           context.strokeStyle = '#000000';
+
           context.fillRect(x, y, cellSize, cellSize);
           context.beginPath();
-          context.moveTo(x, y);
-          context.lineTo(x + cellSize, y + cellSize);
+          context.moveTo(x + (4 * cellSize) / 5, y + (4 * cellSize) / 5);
+          context.lineTo(x + cellSize / 5, y + cellSize / 5);
           context.stroke();
 
           context.beginPath();
-          context.moveTo(x, y + cellSize);
-          context.lineTo(x + cellSize, y);
+          context.moveTo(x + cellSize / 5, y + (4 * cellSize) / 5);
+          context.lineTo(x + (4 * cellSize) / 5, y + cellSize / 5);
           context.stroke();
         } else {
           context.fillStyle = '#ffffff';
