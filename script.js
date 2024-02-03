@@ -8,7 +8,6 @@ const gridColors = [];
 const cellCount = 5;
 let solutionArr = solutions.empty;
 let gameBegin = false;
-// let matrixAddr = 'empty 0';
 
 const canvasContainer = document.createElement('section');
 canvasContainer.className = 'canvasContainer';
