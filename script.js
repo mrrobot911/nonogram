@@ -5,7 +5,7 @@ import solutions from './helpers/solution.js';
 let canvasSize;
 let cellSize;
 let titleSize = 70;
-const gridColors = [];
+let gridColors = [];
 let cellCount = 5;
 let solutionArr = solutions.empty[0].empty;
 let gameBegin = false;
@@ -79,12 +79,12 @@ const context = canvas.getContext('2d');
 if (window.innerWidth < 950) {
   if (window.innerWidth < 750) {
     if (window.innerWidth < 580) {
-      canvasSize = 200;
+      canvasSize = 210;
     } else {
       canvasSize = 300;
     }
   } else {
-    canvasSize = 400;
+    canvasSize = 420;
   }
 } else {
   canvasSize = 600;
@@ -102,13 +102,13 @@ function resizeCanvas(size) {
 }
 function updateCanvasSize() {
   if (window.innerWidth <= 580) {
-    resizeCanvas(200);
+    resizeCanvas(210);
   }
   if (window.innerWidth <= 750 && window.innerWidth > 580) {
     resizeCanvas(300);
   }
   if (window.innerWidth <= 950 && window.innerWidth > 750) {
-    resizeCanvas(400);
+    resizeCanvas(420);
   }
   if (window.innerWidth > 950) {
     resizeCanvas(600);
@@ -154,6 +154,7 @@ const handleContextMenu = (event) => {
   }
 };
 const clearGrid = () => {
+  gridColors = [];
   for (let i = 0; i < (canvas.width - titleSize) / cellSize; i += 1) {
     gridColors[i] = [];
     for (let j = 0; j < (canvas.height - titleSize) / cellSize; j += 1) {

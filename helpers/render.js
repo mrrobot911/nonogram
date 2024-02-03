@@ -3,11 +3,11 @@ export default function render(
   context,
   cellSize,
   gridColors,
-  TITLE_SIZE,
+  titleSize,
   arr
 ) {
-  const CELL_COUNT_X = Math.floor((canvas.width - TITLE_SIZE) / cellSize);
-  const CELL_COUNT_Y = Math.floor((canvas.height - TITLE_SIZE) / cellSize);
+  const CELL_COUNT_X = Math.floor((canvas.width - titleSize) / cellSize);
+  const CELL_COUNT_Y = Math.floor((canvas.height - titleSize) / cellSize);
 
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.fillStyle = '#000000';
@@ -30,7 +30,7 @@ export default function render(
         count = 0;
       }
     }
-    const x = (i + 1) * cellSize + TITLE_SIZE - cellSize / 2;
+    const x = (i + 1) * cellSize + titleSize - cellSize / 2;
     const y = 20;
 
     hint.forEach((part, index) => {
@@ -54,7 +54,7 @@ export default function render(
       }
     }
     const x = cellSize / 10;
-    const y = (j + 1) * cellSize + TITLE_SIZE - cellSize / 2;
+    const y = (j + 1) * cellSize + titleSize - cellSize / 2;
 
     context.fillText(hint.join(' '), x, y);
   }
@@ -62,11 +62,8 @@ export default function render(
   // Отрисовка линий между подсказками
   for (let i = 0; i <= CELL_COUNT_X + 1; i += 1) {
     context.beginPath();
-    context.moveTo(i === 0 ? 0 : cellSize * (i - 1) + TITLE_SIZE, 0);
-    context.lineTo(
-      i === 0 ? 0 : cellSize * (i - 1) + TITLE_SIZE,
-      canvas.height
-    );
+    context.moveTo(i === 0 ? 0 : cellSize * (i - 1) + titleSize, 0);
+    context.lineTo(i === 0 ? 0 : cellSize * (i - 1) + titleSize, canvas.height);
     context.lineWidth = 3;
     context.strokeStyle = '#ccc';
     context.stroke();
@@ -74,20 +71,20 @@ export default function render(
 
   for (let i = 0; i <= CELL_COUNT_Y + 1; i += 1) {
     context.beginPath();
-    context.moveTo(0, i === 0 ? 0 : cellSize * (i - 1) + TITLE_SIZE);
-    context.lineTo(canvas.width, i === 0 ? 0 : cellSize * (i - 1) + TITLE_SIZE);
+    context.moveTo(0, i === 0 ? 0 : cellSize * (i - 1) + titleSize);
+    context.lineTo(canvas.width, i === 0 ? 0 : cellSize * (i - 1) + titleSize);
     context.lineWidth = 3;
     context.strokeStyle = '#ccc';
     context.stroke();
   }
 
-  for (let x = TITLE_SIZE; x <= canvas.width; x += cellSize) {
-    for (let y = TITLE_SIZE; y <= canvas.height; y += cellSize) {
+  for (let x = titleSize; x <= canvas.width; x += cellSize) {
+    for (let y = titleSize; y <= canvas.height; y += cellSize) {
       context.beginPath();
-      context.moveTo(x, TITLE_SIZE);
+      context.moveTo(x, titleSize);
       context.lineTo(x, canvas.height);
 
-      if ((x - TITLE_SIZE) % (cellSize * 5) === 0) {
+      if ((x - titleSize) % (cellSize * 5) === 0) {
         context.lineWidth = 3;
         context.strokeStyle = '#ccc';
       } else {
@@ -97,10 +94,10 @@ export default function render(
       context.stroke();
 
       context.beginPath();
-      context.moveTo(TITLE_SIZE, y);
+      context.moveTo(titleSize, y);
       context.lineTo(canvas.width, y);
 
-      if ((y - TITLE_SIZE) % (cellSize * 5) === 0) {
+      if ((y - titleSize) % (cellSize * 5) === 0) {
         context.lineWidth = 3;
         context.strokeStyle = '#ccc';
       } else {
@@ -110,16 +107,14 @@ export default function render(
       context.stroke();
       if (x < canvas.width && y < canvas.height) {
         if (
-          gridColors[(x - TITLE_SIZE) / cellSize][
-            (y - TITLE_SIZE) / cellSize
-          ] === 1
+          gridColors[(x - titleSize) / cellSize][(y - titleSize) / cellSize] ===
+          1
         ) {
           context.fillStyle = '#000000';
           context.fillRect(x, y, cellSize, cellSize);
         } else if (
-          gridColors[(x - TITLE_SIZE) / cellSize][
-            (y - TITLE_SIZE) / cellSize
-          ] === 2
+          gridColors[(x - titleSize) / cellSize][(y - titleSize) / cellSize] ===
+          2
         ) {
           context.fillStyle = '#ffffff';
           context.fillRect(x, y, cellSize, cellSize);
