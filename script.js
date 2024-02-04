@@ -18,6 +18,7 @@ let matrix = '';
 let clickSoundL = null;
 let clickSoundR = null;
 let clickSoundApplause = null;
+// let theme = 'light';
 
 const canvasContainer = document.createElement('section');
 canvasContainer.className = 'canvasContainer';
@@ -99,30 +100,18 @@ controlsContainer.append(saveGameContainer);
 canvasContainer.append(canvas, controlsContainer);
 const context = canvas.getContext('2d');
 
-if (window.innerWidth < 950) {
-  if (window.innerWidth < 750) {
-    if (window.innerWidth < 580) {
-      canvasSize = 210;
-    } else {
-      canvasSize = 300;
-    }
-  } else {
-    canvasSize = 420;
-  }
-} else {
-  canvasSize = 600;
+function canvasProperty(size) {
+  canvas.width = size + titleSize;
+  canvas.height = size + titleSize;
+  cellSize = size / cellCount;
 }
-function canvasProperty() {
-  canvas.width = canvasSize + titleSize;
-  canvas.height = canvasSize + titleSize;
-  cellSize = canvasSize / cellCount;
-}
-canvasProperty();
+
 function resizeCanvas(size) {
   canvasSize = size;
-  canvasProperty();
+  canvasProperty(size);
   render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
 }
+
 function updateCanvasSize() {
   if (window.innerWidth <= 580) {
     resizeCanvas(210);
@@ -137,6 +126,7 @@ function updateCanvasSize() {
     resizeCanvas(600);
   }
 }
+updateCanvasSize();
 function updateTimerDisplay() {
   timer.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
@@ -249,7 +239,7 @@ const clearGrid = () => {
 
 function StartGame(value) {
   if (value) {
-    canvasProperty();
+    updateCanvasSize();
     const valueAddr = value.split(' ');
     const arr = solutions[valueAddr[0]][valueAddr[1]][valueAddr[2]];
     isGameBegin = true;

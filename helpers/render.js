@@ -105,7 +105,8 @@ export default function render(
         context.strokeStyle = '#ccc';
       }
       context.stroke();
-      if (x < canvas.width && y < canvas.height) {
+
+      if (x < canvas.width && y < canvas.height && gridColors.length > 0) {
         if (
           gridColors[(x - titleSize) / cellSize][(y - titleSize) / cellSize] ===
           1
