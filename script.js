@@ -155,10 +155,10 @@ function updateCanvasSize() {
   if (window.innerWidth <= 580) {
     resizeCanvas(210);
   }
-  if (window.innerWidth <= 750 && window.innerWidth > 580) {
+  if (window.innerWidth <= 820 && window.innerWidth > 580) {
     resizeCanvas(300);
   }
-  if (window.innerWidth <= 950 && window.innerWidth > 750) {
+  if (window.innerWidth <= 950 && window.innerWidth > 820) {
     resizeCanvas(420);
   }
   if (window.innerWidth > 950) {
