@@ -128,16 +128,27 @@ controlsContainer.append(
 );
 canvasContainer.append(canvas, controlsContainer);
 
+const clearGrid = () => {
+  gridColors = [];
+  for (let i = 0; i < (canvas.width - titleSize) / cellSize; i += 1) {
+    gridColors[i] = [];
+    for (let j = 0; j < (canvas.height - titleSize) / cellSize; j += 1) {
+      gridColors[i][j] = 0;
+    }
+  }
+};
+
 function canvasProperty(size) {
   canvas.width = size + titleSize;
   canvas.height = size + titleSize;
   cellSize = size / cellCount;
+  clearGrid();
+  render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
 }
 
 function resizeCanvas(size) {
   canvasSize = size;
   canvasProperty(size);
-  render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
 }
 
 function updateCanvasSize() {
@@ -271,25 +282,23 @@ const handleContextMenu = (event) => {
     );
   }
 };
-const clearGrid = () => {
-  gridColors = [];
-  for (let i = 0; i < (canvas.width - titleSize) / cellSize; i += 1) {
-    gridColors[i] = [];
-    for (let j = 0; j < (canvas.height - titleSize) / cellSize; j += 1) {
-      gridColors[i][j] = 0;
-    }
-  }
-};
 
 function StartGame(value) {
   if (value) {
-    updateCanvasSize();
     const valueAddr = value.split(' ');
     const arr = solutions[valueAddr[0]][valueAddr[1]][valueAddr[2]];
     isGameBegin = true;
     solutionArr = arr;
-    clearGrid();
-    render(canvas, context, cellSize, gridColors, titleSize, arr, theme);
+    updateCanvasSize();
+    render(
+      canvas,
+      context,
+      cellSize,
+      gridColors,
+      titleSize,
+      solutionArr,
+      theme
+    );
   }
 }
 
