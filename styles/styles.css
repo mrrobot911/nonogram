@@ -70,6 +70,18 @@
   top: 50%;
   transform: translate(-50%, -50%);
 }
+.closeBtn {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 25px;
+  height: 25px;
+  border: 1px solid rgb(0, 0, 0);
+  background-color: rgb(240, 240, 240);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.6s ease-in-out;
+}
 .helpMessage {
   position: absolute;
   gap: 15px;
@@ -105,7 +117,6 @@
   border-radius: 34px;
   transition: 0.4s;
 }
-
 .toggleSlider:before {
   position: absolute;
   content: '';
@@ -117,16 +128,19 @@
   border-radius: 50%;
   transition: 0.4s;
 }
-
 .toggleSlider.checked {
   background-color: #2196f3;
 }
-
 .toggleSlider.checked:before {
   transform: translateX(26px);
 }
 #gridCanvas {
   background-color: var(--deashboard);
+}
+@media (hover: hover) {
+  .closeBtn:hover {
+    transform: scale(1.15);
+  }
 }
 @media (max-width: 1100px) {
   .canvasContainer {

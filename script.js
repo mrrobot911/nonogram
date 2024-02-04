@@ -237,7 +237,11 @@ const handleMouseClick = (event) => {
       const message = document.createElement('p');
       message.innerText = `Great! You have solved the nonogram in ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} seconds!`;
       const closeBtn = document.createElement('button');
-      closeBtn.textContent = 'Close';
+      closeBtn.className = 'closeBtn';
+      closeBtn.innerHTML = `<svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 16.8507L17 2.00001" stroke="#0C0C0E" stroke-width="3"/>
+      <path d="M2 2.14928L17 17" stroke="#0C0C0E" stroke-width="3"/>
+    </svg>`;
       closeBtn.addEventListener('click', () => {
         document.body.removeChild(modalContainer);
         resetTimer();
