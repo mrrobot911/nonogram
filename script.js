@@ -19,6 +19,8 @@ let clickSoundL = null;
 let clickSoundR = null;
 let clickSoundApplause = null;
 let theme = 'light';
+const resultsTemp = localStorage.getItem('results') || [];
+const results = resultsTemp.length > 0 ? JSON.parse(resultsTemp) : resultsTemp;
 
 document.documentElement.dataset.theme = theme;
 const canvasContainer = document.createElement('section');
@@ -92,7 +94,7 @@ saveGameContainer.className = 'saveGameContainer';
 const saveGameBtn = document.createElement('button');
 saveGameBtn.textContent = 'Save game';
 const continueLastGameBtn = document.createElement('button');
-continueLastGameBtn.textContent = 'continue last game';
+continueLastGameBtn.textContent = 'Continue last game';
 
 saveGameContainer.append(saveGameBtn, continueLastGameBtn);
 
@@ -116,6 +118,10 @@ toggleCheckbox.addEventListener('change', () => {
 });
 
 toggleContainer.append(toggleCheckbox, toggleSlider);
+const showResultsBtn = document.createElement('button');
+showResultsBtn.textContent = 'Show results';
+const randomGame = document.createElement('button');
+randomGame.textContent = 'Start random game';
 
 controlsContainer.append(
   timer,
@@ -124,25 +130,16 @@ controlsContainer.append(
   selectContainer,
   showAnswerBtn,
   saveGameContainer,
-  toggleContainer
+  toggleContainer,
+  showResultsBtn,
+  randomGame
 );
 canvasContainer.append(canvas, controlsContainer);
-
-const clearGrid = () => {
-  gridColors = [];
-  for (let i = 0; i < (canvas.width - titleSize) / cellSize; i += 1) {
-    gridColors[i] = [];
-    for (let j = 0; j < (canvas.height - titleSize) / cellSize; j += 1) {
-      gridColors[i][j] = 0;
-    }
-  }
-};
 
 function canvasProperty(size) {
   canvas.width = size + titleSize;
   canvas.height = size + titleSize;
   cellSize = size / cellCount;
-  clearGrid();
   render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
 }
 
@@ -190,7 +187,11 @@ function resetTimer() {
   minutes = 0;
   updateTimerDisplay();
 }
-
+function clearGrid() {
+  gridColors = Array.from({ length: cellCount }, () =>
+    Array(cellCount).fill(0)
+  );
+}
 const handleMouseClick = (event) => {
   if (!matrix) {
     const helpParagraf = document.createElement('p');
@@ -232,6 +233,12 @@ const handleMouseClick = (event) => {
     );
     const isWinGame = isMatrixEqual(gridColors, solutionArr);
     if (isWinGame) {
+      const tempResults = results.length >= 5 ? results.slice(1) : results;
+      const solwedGame = matrix.split(' ');
+      const solwedGameTime = minutes * 60 + seconds;
+      tempResults.push([solwedGameTime, solwedGame[0], solwedGame[2]]);
+      localStorage.setItem('results', JSON.stringify(tempResults));
+
       const modalContainer = document.createElement('div');
       modalContainer.className = 'modalContainer';
       const message = document.createElement('p');
@@ -293,6 +300,7 @@ const handleContextMenu = (event) => {
 
 function StartGame(value) {
   if (value) {
+    clearGrid();
     const valueAddr = value.split(' ');
     const arr = solutions[valueAddr[0]][valueAddr[1]][valueAddr[2]];
     isGameBegin = true;
@@ -324,6 +332,8 @@ restartBtn.addEventListener('click', () => {
     isTimerBegin = false;
     clearGrid();
   }
+  stopTimer();
+  resetTimer();
   render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
 });
 showAnswerBtn.addEventListener('click', () => {
@@ -335,7 +345,7 @@ showAnswerBtn.addEventListener('click', () => {
 saveGameBtn.addEventListener('click', () => {
   localStorage.setItem(
     'saved_game',
-    JSON.stringify([cellSize, titleSize, minutes, seconds])
+    JSON.stringify([cellSize, titleSize, minutes, seconds, matrix])
   );
   localStorage.setItem('saved_game_answ', JSON.stringify(gridColors));
   localStorage.setItem('saved_game_quest', JSON.stringify(solutionArr));
@@ -345,16 +355,59 @@ continueLastGameBtn.addEventListener('click', () => {
   isGameBegin = true;
   solutionArr = JSON.parse(localStorage.getItem('saved_game_quest'));
   gridColors = JSON.parse(localStorage.getItem('saved_game_answ'));
-  [cellSize, titleSize, minutes, seconds] = JSON.parse(
+  [cellSize, titleSize, minutes, seconds, matrix] = JSON.parse(
     localStorage.getItem('saved_game')
   );
-  matrix = solutionArr;
   render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
 });
 document.addEventListener('DOMContentLoaded', () => {
   clickSoundL = new Audio('./assets/clickL.mp3');
   clickSoundR = new Audio('./assets/clickR.mp3');
   clickSoundApplause = new Audio('./assets/applause.mp3');
+});
+showResultsBtn.addEventListener('click', () => {
+  const modalContainer = document.createElement('div');
+  modalContainer.className = 'modalContainer';
+  if (results.length > 0) {
+    results.sort();
+    results.forEach((el, i) => {
+      const message = document.createElement('p');
+      message.innerText = `${i + 1}. difficult: ${el[1]}; name: ${el[2]}; time: ${String(Math.floor(el[0] / 60)).padStart(2, '0')}:${String(el[0] % 60).padStart(2, '0')}`;
+      modalContainer.append(message);
+    });
+  } else {
+    const message = document.createElement('p');
+    message.innerText = 'no results yet';
+  }
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'closeBtn';
+  closeBtn.innerHTML = `<svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M2 16.8507L17 2.00001" stroke="#0C0C0E" stroke-width="3"/>
+  <path d="M2 2.14928L17 17" stroke="#0C0C0E" stroke-width="3"/>
+  </svg>`;
+  closeBtn.addEventListener('click', () => {
+    document.body.removeChild(modalContainer);
+    resetTimer();
+    isTimerBegin = false;
+  });
+  modalContainer.append(closeBtn);
+  document.body.appendChild(modalContainer);
+});
+randomGame.addEventListener('click', () => {
+  const indexLvl = Math.floor(Math.random() * lvl.length);
+  const indexGame = Math.floor(Math.random() * solutions[lvl[indexLvl]].length);
+  matrix = `${lvl[indexLvl]} ${indexGame} ${Object.keys(solutions[lvl[indexLvl]][indexGame])}`;
+  if (lvl[indexLvl] === 'medium') {
+    cellCount = 10;
+    titleSize = 70;
+  } else if (lvl[indexLvl] === 'hard') {
+    cellCount = 15;
+    titleSize = 90;
+  } else {
+    cellCount = 5;
+    titleSize = 70;
+  }
+  StartGame(matrix);
 });
 
 clearGrid();
