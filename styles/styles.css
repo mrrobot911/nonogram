@@ -2,6 +2,7 @@
   max-width: 1440px;
   height: 100vh;
   display: flex;
+  margin: 0 auto;
   justify-content: center;
   align-items: center;
   background: url('../assets/fudzi.jpeg') center center no-repeat fixed;
@@ -33,10 +34,48 @@
   display: flex;
   flex-direction: column;
 }
+.timerEl {
+  align-self: center;
+  font-size: 22px;
+  color: rgb(0, 0, 255);
+}
 .selectContainer {
   display: flex;
   flex-direction: column;
   margin: 20px 0px;
+}
+.saveGameContainer {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.modalContainer {
+  position: fixed;
+  gap: 15px;
+  z-index: 5;
+  background-color: rgb(240, 240, 240);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  border-radius: 40px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.helpMessage {
+  position: absolute;
+  gap: 15px;
+  z-index: 5;
+  color: rgb(255, 0, 0);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  border-radius: 40px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 #gridCanvas {
   background-color: rgb(240, 240, 240);

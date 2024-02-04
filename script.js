@@ -8,9 +8,16 @@ let titleSize = 70;
 let gridColors = [];
 let cellCount = 5;
 let solutionArr = solutions.empty[0].empty;
-let gameBegin = false;
+let isGameBegin = false;
+let isTimerBegin = false;
+let minutes = 0;
+let seconds = 0;
+let timerInterval;
 const lvl = ['easy', 'medium', 'hard'];
 let matrix = '';
+let clickSoundL = null;
+let clickSoundR = null;
+let clickSoundApplause = null;
 
 const canvasContainer = document.createElement('section');
 canvasContainer.className = 'canvasContainer';
@@ -22,12 +29,15 @@ canvas.width = canvasSize + titleSize;
 canvas.height = canvasSize + titleSize;
 const controlsContainer = document.createElement('div');
 controlsContainer.className = 'controlsContainer';
+const timer = document.createElement('p');
+timer.className = 'timerEl';
+timer.innerText = '00:00';
 const restartBtn = document.createElement('button');
-restartBtn.textContent = 'Resturt Game';
+restartBtn.textContent = 'Reset Game';
 const playBtn = document.createElement('button');
 playBtn.textContent = 'Start Game';
 
-controlsContainer.append(playBtn, restartBtn);
+controlsContainer.append(timer, playBtn, restartBtn);
 
 const templateSelect1 = document.createElement('select');
 const templateSelect2 = document.createElement('select');
@@ -78,6 +88,14 @@ controlsContainer.append(selectContainer);
 const showAnswerBtn = document.createElement('button');
 showAnswerBtn.textContent = 'Show Answer';
 controlsContainer.append(showAnswerBtn);
+const saveGameContainer = document.createElement('div');
+saveGameContainer.className = 'saveGameContainer';
+const saveGameBtn = document.createElement('button');
+saveGameBtn.textContent = 'Save game';
+const continueLastGameBtn = document.createElement('button');
+continueLastGameBtn.textContent = 'continue last game';
+saveGameContainer.append(saveGameBtn, continueLastGameBtn);
+controlsContainer.append(saveGameContainer);
 canvasContainer.append(canvas, controlsContainer);
 const context = canvas.getContext('2d');
 
@@ -119,9 +137,45 @@ function updateCanvasSize() {
     resizeCanvas(600);
   }
 }
+function updateTimerDisplay() {
+  timer.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+function startTimer() {
+  timerInterval = setInterval(() => {
+    seconds += 1;
+    if (seconds === 60) {
+      seconds = 0;
+      minutes += 1;
+    }
+    updateTimerDisplay();
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+}
+
+function resetTimer() {
+  stopTimer();
+  seconds = 0;
+  minutes = 0;
+  updateTimerDisplay();
+}
 
 const handleMouseClick = (event) => {
-  if (gameBegin) {
+  if (!matrix) {
+    const helpParagraf = document.createElement('p');
+    helpParagraf.className = 'helpMessage';
+    helpParagraf.innerText =
+      'First choose the option you want to solve and then press the start button';
+    canvasContainer.appendChild(helpParagraf);
+    setTimeout(() => canvasContainer.removeChild(helpParagraf), 3000);
+  }
+  if (isGameBegin) {
+    if (!isTimerBegin) {
+      startTimer();
+      isTimerBegin = true;
+    }
     const mouseX = event.clientX - canvas.getBoundingClientRect().left;
     const mouseY = event.clientY - canvas.getBoundingClientRect().top;
 
@@ -135,17 +189,36 @@ const handleMouseClick = (event) => {
         gridColors[gridX][gridY] = 0;
       }
     }
+    if (clickSoundL !== null) {
+      clickSoundL.play();
+    }
     render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
-    const win = isMatrixEqual(gridColors, solutionArr);
-    if (win) {
-      alert('You win!');
-      gameBegin = false;
+    const isWinGame = isMatrixEqual(gridColors, solutionArr);
+    if (isWinGame) {
+      const modalContainer = document.createElement('div');
+      modalContainer.className = 'modalContainer';
+      const message = document.createElement('p');
+      message.innerText = `Great! You have solved the nonogram in ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} seconds!`;
+      const closeBtn = document.createElement('button');
+      closeBtn.textContent = 'Close';
+      closeBtn.addEventListener('click', () => {
+        document.body.removeChild(modalContainer);
+        resetTimer();
+        isTimerBegin = false;
+      });
+      modalContainer.append(message, closeBtn);
+      document.body.appendChild(modalContainer);
+      isGameBegin = false;
+      stopTimer();
+      if (clickSoundApplause !== null) {
+        clickSoundApplause.play();
+      }
     }
   }
 };
 const handleContextMenu = (event) => {
   event.preventDefault();
-  if (gameBegin) {
+  if (isGameBegin) {
     const mouseX = event.clientX - canvas.getBoundingClientRect().left;
     const mouseY = event.clientY - canvas.getBoundingClientRect().top;
 
@@ -157,6 +230,9 @@ const handleContextMenu = (event) => {
       } else if (gridColors[gridX][gridY] === 2) {
         gridColors[gridX][gridY] = 0;
       }
+    }
+    if (clickSoundR !== null) {
+      clickSoundR.play();
     }
     render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
   }
@@ -176,7 +252,7 @@ function StartGame(value) {
     canvasProperty();
     const valueAddr = value.split(' ');
     const arr = solutions[valueAddr[0]][valueAddr[1]][valueAddr[2]];
-    gameBegin = true;
+    isGameBegin = true;
     solutionArr = arr;
     clearGrid();
     render(canvas, context, cellSize, gridColors, titleSize, arr);
@@ -191,14 +267,42 @@ playBtn.addEventListener('click', () => {
   StartGame(matrix);
 });
 restartBtn.addEventListener('click', () => {
-  clearGrid();
-  gameBegin = true;
+  const isWinGame = isMatrixEqual(gridColors, solutionArr);
+  if (!isWinGame) {
+    isGameBegin = true;
+    clearGrid();
+  }
   render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
 });
 showAnswerBtn.addEventListener('click', () => {
   gridColors = solutionArr;
   render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
-  gameBegin = false;
+  isGameBegin = false;
+  stopTimer();
 });
+saveGameBtn.addEventListener('click', () => {
+  localStorage.setItem(
+    'saved_game',
+    JSON.stringify([cellSize, titleSize, minutes, seconds])
+  );
+  localStorage.setItem('saved_game_answ', JSON.stringify(gridColors));
+  localStorage.setItem('saved_game_quest', JSON.stringify(solutionArr));
+});
+continueLastGameBtn.addEventListener('click', () => {
+  stopTimer();
+  solutionArr = JSON.parse(localStorage.getItem('saved_game_quest'));
+  gridColors = JSON.parse(localStorage.getItem('saved_game_answ'));
+  [cellSize, titleSize, minutes, seconds] = JSON.parse(
+    localStorage.getItem('saved_game')
+  );
+  render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
+  startTimer();
+});
+document.addEventListener('DOMContentLoaded', () => {
+  clickSoundL = new Audio('./assets/clickL.mp3');
+  clickSoundR = new Audio('./assets/clickR.mp3');
+  clickSoundApplause = new Audio('./assets/applause.mp3');
+});
+
 clearGrid();
 render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
