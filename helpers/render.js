@@ -13,7 +13,7 @@ export default function render(
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.fillStyle = theme === 'light' ? '#000000' : '#8b00ff';
 
-  context.font = `bold 16px Arial`;
+  context.font = cellSize > 28 ? `bold 16px Arial` : `bold 14px Arial`;
 
   // Отрисовка подсказок по строкам
   for (let i = 0; i < CELL_COUNT_X; i += 1) {
@@ -31,11 +31,14 @@ export default function render(
         count = 0;
       }
     }
-    const x = (i + 1) * cellSize + titleSize - cellSize / 2;
+    const x =
+      (i + 1) * cellSize +
+      titleSize -
+      (cellSize > 30 ? cellSize / 2 : cellSize / 1.5);
     const y = 20;
 
     hint.forEach((part, index) => {
-      context.fillText(part, x, y + index * 16);
+      context.fillText(part, x, y + index * (cellSize > 28 ? 16 : 14));
     });
   }
 
@@ -55,7 +58,10 @@ export default function render(
       }
     }
     const x = cellSize / 10;
-    const y = (j + 1) * cellSize + titleSize - cellSize / 2;
+    const y =
+      (j + 1) * cellSize +
+      titleSize -
+      (cellSize > 28 ? cellSize / 2 : cellSize / 4);
 
     context.fillText(hint.join(' '), x, y);
   }
