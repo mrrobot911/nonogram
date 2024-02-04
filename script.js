@@ -241,7 +241,7 @@ const handleMouseClick = (event) => {
       closeBtn.innerHTML = `<svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M2 16.8507L17 2.00001" stroke="#0C0C0E" stroke-width="3"/>
       <path d="M2 2.14928L17 17" stroke="#0C0C0E" stroke-width="3"/>
-    </svg>`;
+      </svg>`;
       closeBtn.addEventListener('click', () => {
         document.body.removeChild(modalContainer);
         resetTimer();
@@ -260,6 +260,10 @@ const handleMouseClick = (event) => {
 const handleContextMenu = (event) => {
   event.preventDefault();
   if (isGameBegin) {
+    if (!isTimerBegin) {
+      startTimer();
+      isTimerBegin = true;
+    }
     const mouseX = event.clientX - canvas.getBoundingClientRect().left;
     const mouseY = event.clientY - canvas.getBoundingClientRect().top;
 
@@ -317,6 +321,7 @@ restartBtn.addEventListener('click', () => {
   const isWinGame = isMatrixEqual(gridColors, solutionArr);
   if (!isWinGame) {
     isGameBegin = true;
+    isTimerBegin = false;
     clearGrid();
   }
   render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
@@ -337,13 +342,14 @@ saveGameBtn.addEventListener('click', () => {
 });
 continueLastGameBtn.addEventListener('click', () => {
   stopTimer();
+  isGameBegin = true;
   solutionArr = JSON.parse(localStorage.getItem('saved_game_quest'));
   gridColors = JSON.parse(localStorage.getItem('saved_game_answ'));
   [cellSize, titleSize, minutes, seconds] = JSON.parse(
     localStorage.getItem('saved_game')
   );
+  matrix = solutionArr;
   render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
-  startTimer();
 });
 document.addEventListener('DOMContentLoaded', () => {
   clickSoundL = new Audio('./assets/clickL.mp3');
