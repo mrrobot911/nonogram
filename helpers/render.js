@@ -4,13 +4,14 @@ export default function render(
   cellSize,
   gridColors,
   titleSize,
-  arr
+  arr,
+  theme
 ) {
   const CELL_COUNT_X = Math.floor((canvas.width - titleSize) / cellSize);
   const CELL_COUNT_Y = Math.floor((canvas.height - titleSize) / cellSize);
 
   context.clearRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = '#000000';
+  context.fillStyle = theme === 'light' ? '#000000' : '#8b00ff';
 
   context.font = `bold 16px Arial`;
 
@@ -65,7 +66,7 @@ export default function render(
     context.moveTo(i === 0 ? 0 : cellSize * (i - 1) + titleSize, 0);
     context.lineTo(i === 0 ? 0 : cellSize * (i - 1) + titleSize, canvas.height);
     context.lineWidth = 3;
-    context.strokeStyle = '#ccc';
+    context.strokeStyle = theme === 'light' ? '#ccc' : '#2F70AF';
     context.stroke();
   }
 
@@ -74,7 +75,7 @@ export default function render(
     context.moveTo(0, i === 0 ? 0 : cellSize * (i - 1) + titleSize);
     context.lineTo(canvas.width, i === 0 ? 0 : cellSize * (i - 1) + titleSize);
     context.lineWidth = 3;
-    context.strokeStyle = '#ccc';
+    context.strokeStyle = theme === 'light' ? '#ccc' : '#2F70AF';
     context.stroke();
   }
 
@@ -86,10 +87,10 @@ export default function render(
 
       if ((x - titleSize) % (cellSize * 5) === 0) {
         context.lineWidth = 3;
-        context.strokeStyle = '#ccc';
+        context.strokeStyle = theme === 'light' ? '#ccc' : '#2F70AF';
       } else {
         context.lineWidth = 1;
-        context.strokeStyle = '#ccc';
+        context.strokeStyle = theme === 'light' ? '#ccc' : '#2F70AF';
       }
       context.stroke();
 
@@ -99,10 +100,10 @@ export default function render(
 
       if ((y - titleSize) % (cellSize * 5) === 0) {
         context.lineWidth = 3;
-        context.strokeStyle = '#ccc';
+        context.strokeStyle = theme === 'light' ? '#ccc' : '#2F70AF';
       } else {
         context.lineWidth = 1;
-        context.strokeStyle = '#ccc';
+        context.strokeStyle = theme === 'light' ? '#ccc' : '#2F70AF';
       }
       context.stroke();
 
@@ -111,16 +112,16 @@ export default function render(
           gridColors[(x - titleSize) / cellSize][(y - titleSize) / cellSize] ===
           1
         ) {
-          context.fillStyle = '#000000';
+          context.fillStyle = theme === 'light' ? '#000000' : '#8b00ff';
           context.fillRect(x, y, cellSize, cellSize);
         } else if (
           gridColors[(x - titleSize) / cellSize][(y - titleSize) / cellSize] ===
           2
         ) {
-          context.fillStyle = '#ffffff';
+          context.fillStyle = theme === 'light' ? '#ffffff' : '#02315E';
           context.fillRect(x, y, cellSize, cellSize);
           context.lineWidth = 4;
-          context.strokeStyle = '#000000';
+          context.strokeStyle = theme === 'light' ? '#000000' : '#8b00ff';
 
           context.fillRect(x, y, cellSize, cellSize);
           context.beginPath();
@@ -133,12 +134,12 @@ export default function render(
           context.lineTo(x + (4 * cellSize) / 5, y + cellSize / 5);
           context.stroke();
         } else {
-          context.fillStyle = '#ffffff';
+          context.fillStyle = theme === 'light' ? '#ffffff' : '#02315E';
           context.fillRect(x, y, cellSize, cellSize);
         }
       }
       context.lineWidth = 1;
-      context.strokeStyle = '#ccc';
+      context.strokeStyle = theme === 'light' ? '#ccc' : '#2F70AF';
     }
   }
 }

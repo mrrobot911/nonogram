@@ -18,8 +18,9 @@ let matrix = '';
 let clickSoundL = null;
 let clickSoundR = null;
 let clickSoundApplause = null;
-// let theme = 'light';
+let theme = 'light';
 
+document.documentElement.dataset.theme = theme;
 const canvasContainer = document.createElement('section');
 canvasContainer.className = 'canvasContainer';
 document.body.appendChild(canvasContainer);
@@ -28,6 +29,7 @@ const canvas = document.createElement('canvas');
 canvas.id = 'gridCanvas';
 canvas.width = canvasSize + titleSize;
 canvas.height = canvasSize + titleSize;
+const context = canvas.getContext('2d');
 const controlsContainer = document.createElement('div');
 controlsContainer.className = 'controlsContainer';
 const timer = document.createElement('p');
@@ -37,8 +39,6 @@ const restartBtn = document.createElement('button');
 restartBtn.textContent = 'Reset Game';
 const playBtn = document.createElement('button');
 playBtn.textContent = 'Start Game';
-
-controlsContainer.append(timer, playBtn, restartBtn);
 
 const templateSelect1 = document.createElement('select');
 const templateSelect2 = document.createElement('select');
@@ -85,20 +85,48 @@ lvl.forEach((item, i) => {
   });
   selectContainer.append(templateSelect);
 });
-controlsContainer.append(selectContainer);
 const showAnswerBtn = document.createElement('button');
 showAnswerBtn.textContent = 'Show Answer';
-controlsContainer.append(showAnswerBtn);
 const saveGameContainer = document.createElement('div');
 saveGameContainer.className = 'saveGameContainer';
 const saveGameBtn = document.createElement('button');
 saveGameBtn.textContent = 'Save game';
 const continueLastGameBtn = document.createElement('button');
 continueLastGameBtn.textContent = 'continue last game';
+
 saveGameContainer.append(saveGameBtn, continueLastGameBtn);
-controlsContainer.append(saveGameContainer);
+
+const toggleContainer = document.createElement('label');
+toggleContainer.className = 'toggleContainer';
+const toggleCheckbox = document.createElement('input');
+toggleCheckbox.className = 'toggleChackBox';
+toggleCheckbox.type = 'checkbox';
+const toggleSlider = document.createElement('span');
+toggleSlider.className = 'toggleSlider';
+toggleCheckbox.addEventListener('change', () => {
+  if (toggleCheckbox.checked) {
+    toggleSlider.classList.add('checked');
+    theme = 'dark';
+  } else {
+    toggleSlider.classList.remove('checked');
+    theme = 'light';
+  }
+  document.documentElement.dataset.theme = theme;
+  render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
+});
+
+toggleContainer.append(toggleCheckbox, toggleSlider);
+
+controlsContainer.append(
+  timer,
+  playBtn,
+  restartBtn,
+  selectContainer,
+  showAnswerBtn,
+  saveGameContainer,
+  toggleContainer
+);
 canvasContainer.append(canvas, controlsContainer);
-const context = canvas.getContext('2d');
 
 function canvasProperty(size) {
   canvas.width = size + titleSize;
@@ -109,7 +137,7 @@ function canvasProperty(size) {
 function resizeCanvas(size) {
   canvasSize = size;
   canvasProperty(size);
-  render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
+  render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
 }
 
 function updateCanvasSize() {
@@ -182,7 +210,15 @@ const handleMouseClick = (event) => {
     if (clickSoundL !== null) {
       clickSoundL.play();
     }
-    render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
+    render(
+      canvas,
+      context,
+      cellSize,
+      gridColors,
+      titleSize,
+      solutionArr,
+      theme
+    );
     const isWinGame = isMatrixEqual(gridColors, solutionArr);
     if (isWinGame) {
       const modalContainer = document.createElement('div');
@@ -224,7 +260,15 @@ const handleContextMenu = (event) => {
     if (clickSoundR !== null) {
       clickSoundR.play();
     }
-    render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
+    render(
+      canvas,
+      context,
+      cellSize,
+      gridColors,
+      titleSize,
+      solutionArr,
+      theme
+    );
   }
 };
 const clearGrid = () => {
@@ -245,7 +289,7 @@ function StartGame(value) {
     isGameBegin = true;
     solutionArr = arr;
     clearGrid();
-    render(canvas, context, cellSize, gridColors, titleSize, arr);
+    render(canvas, context, cellSize, gridColors, titleSize, arr, theme);
   }
 }
 
@@ -262,11 +306,11 @@ restartBtn.addEventListener('click', () => {
     isGameBegin = true;
     clearGrid();
   }
-  render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
+  render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
 });
 showAnswerBtn.addEventListener('click', () => {
   gridColors = solutionArr;
-  render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
+  render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
   isGameBegin = false;
   stopTimer();
 });
@@ -285,7 +329,7 @@ continueLastGameBtn.addEventListener('click', () => {
   [cellSize, titleSize, minutes, seconds] = JSON.parse(
     localStorage.getItem('saved_game')
   );
-  render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
+  render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
   startTimer();
 });
 document.addEventListener('DOMContentLoaded', () => {
@@ -295,4 +339,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 clearGrid();
-render(canvas, context, cellSize, gridColors, titleSize, solutionArr);
+render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
