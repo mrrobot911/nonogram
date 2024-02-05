@@ -50,10 +50,15 @@ controlsContainer.className = 'controlsContainer';
 const timer = document.createElement('p');
 timer.className = 'timerEl';
 timer.innerText = '00:00';
+const startBtnContainer = document.createElement('div');
+startBtnContainer.className = 'btnContainer';
 const restartBtn = document.createElement('button');
 restartBtn.textContent = 'Reset Game';
+restartBtn.className = 'buttonEl';
 const playBtn = document.createElement('button');
 playBtn.textContent = 'Start Game';
+playBtn.className = 'buttonEl';
+startBtnContainer.append(playBtn, restartBtn);
 
 const templateSelect1 = document.createElement('select');
 const templateSelect2 = document.createElement('select');
@@ -91,14 +96,24 @@ lvl.forEach((item, i) => {
   });
   selectContainer.append(templateSelect);
 });
+const showContainer = document.createElement('div');
+showContainer.className = 'btnContainer';
 const showAnswerBtn = document.createElement('button');
 showAnswerBtn.textContent = 'Show Answer';
+showAnswerBtn.className = 'buttonEl';
+showAnswerBtn.disabled = true;
+const showResultsBtn = document.createElement('button');
+showResultsBtn.textContent = 'Show results';
+showResultsBtn.className = 'buttonEl';
+showContainer.append(showAnswerBtn, showResultsBtn);
 const saveGameContainer = document.createElement('div');
-saveGameContainer.className = 'saveGameContainer';
+saveGameContainer.className = 'btnContainer';
 const saveGameBtn = document.createElement('button');
 saveGameBtn.textContent = 'Save game';
+saveGameBtn.className = 'buttonEl';
 const continueLastGameBtn = document.createElement('button');
 continueLastGameBtn.textContent = 'Continue last game';
+continueLastGameBtn.className = 'buttonEl';
 
 saveGameContainer.append(saveGameBtn, continueLastGameBtn);
 
@@ -122,20 +137,17 @@ toggleCheckbox.addEventListener('change', () => {
 });
 
 toggleContainer.append(toggleCheckbox, toggleSlider);
-const showResultsBtn = document.createElement('button');
-showResultsBtn.textContent = 'Show results';
 const randomGame = document.createElement('button');
 randomGame.textContent = 'Start random game';
+randomGame.className = 'buttonEl';
 
 controlsContainer.append(
   timer,
-  playBtn,
-  restartBtn,
+  startBtnContainer,
   selectContainer,
-  showAnswerBtn,
+  showContainer,
   saveGameContainer,
   toggleContainer,
-  showResultsBtn,
   randomGame
 );
 canvasContainer.append(canvas, controlsContainer);
@@ -269,6 +281,7 @@ const handleMouseClick = (event) => {
       if (clickSoundApplause !== null) {
         clickSoundApplause.play();
       }
+      showAnswerBtn.disabled = true;
     }
   }
 };
@@ -323,6 +336,7 @@ function StartGame(value) {
       solutionArr,
       theme
     );
+    showAnswerBtn.disabled = false;
   }
 }
 
@@ -349,14 +363,19 @@ showAnswerBtn.addEventListener('click', () => {
   render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
   isGameBegin = false;
   stopTimer();
+  showAnswerBtn.disabled = true;
 });
 saveGameBtn.addEventListener('click', () => {
-  localStorage.setItem(
-    'saved_game',
-    JSON.stringify([cellSize, titleSize, minutes, seconds, matrix])
-  );
-  localStorage.setItem('saved_game_answ', JSON.stringify(gridColors));
-  localStorage.setItem('saved_game_quest', JSON.stringify(solutionArr));
+  if (isGameBegin) {
+    localStorage.setItem(
+      'saved_game',
+      JSON.stringify([cellSize, titleSize, minutes, seconds, matrix])
+    );
+    localStorage.setItem('saved_game_answ', JSON.stringify(gridColors));
+    localStorage.setItem('saved_game_quest', JSON.stringify(solutionArr));
+  } else {
+    showMessage('No game started yet');
+  }
 });
 continueLastGameBtn.addEventListener('click', () => {
   const solutionArrSaved = localStorage.getItem('saved_game_quest');
@@ -378,6 +397,7 @@ continueLastGameBtn.addEventListener('click', () => {
       solutionArr,
       theme
     );
+    showAnswerBtn.disabled = false;
   } else {
     showMessage('No game saved yet');
   }
