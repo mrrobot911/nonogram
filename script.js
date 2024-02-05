@@ -102,7 +102,7 @@ lvl.forEach((item, i) => {
 const showContainer = document.createElement('div');
 showContainer.className = 'btnContainer';
 const showAnswerBtn = document.createElement('button');
-showAnswerBtn.textContent = 'Show Answer';
+showAnswerBtn.textContent = 'Solution';
 showAnswerBtn.className = 'buttonEl';
 showAnswerBtn.disabled = true;
 const showResultsBtn = document.createElement('button');
@@ -175,7 +175,7 @@ toggleContainerSound.append(toggleCheckbox2, toggleSlider2);
 toggleContainer.append(toggleContainerTheme, toggleContainerSound);
 
 const randomGame = document.createElement('button');
-randomGame.textContent = 'Start random game';
+randomGame.textContent = 'Random game';
 randomGame.className = 'buttonEl';
 
 controlsContainer.append(
