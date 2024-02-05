@@ -58,6 +58,7 @@ restartBtn.className = 'buttonEl';
 const playBtn = document.createElement('button');
 playBtn.textContent = 'Start Game';
 playBtn.className = 'buttonEl';
+playBtn.disabled = true;
 startBtnContainer.append(playBtn, restartBtn);
 
 const templateSelect1 = document.createElement('select');
@@ -93,6 +94,7 @@ lvl.forEach((item, i) => {
     });
     matrix = selectors[i].value;
     lvlCheck(item);
+    playBtn.disabled = false;
   });
   selectContainer.append(templateSelect);
 });
