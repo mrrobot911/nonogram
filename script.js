@@ -22,6 +22,19 @@ let theme = 'light';
 const resultsTemp = localStorage.getItem('results') || [];
 const results = resultsTemp.length > 0 ? JSON.parse(resultsTemp) : resultsTemp;
 
+function lvlCheck(item) {
+  if (item === 'medium') {
+    cellCount = 10;
+    titleSize = 70;
+  } else if (item === 'hard') {
+    cellCount = 15;
+    titleSize = 90;
+  } else {
+    cellCount = 5;
+    titleSize = 70;
+  }
+}
+
 document.documentElement.dataset.theme = theme;
 const canvasContainer = document.createElement('section');
 canvasContainer.className = 'canvasContainer';
@@ -74,16 +87,7 @@ lvl.forEach((item, i) => {
       }
     });
     matrix = selectors[i].value;
-    if (item === 'medium') {
-      cellCount = 10;
-      titleSize = 70;
-    } else if (item === 'hard') {
-      cellCount = 15;
-      titleSize = 90;
-    } else {
-      cellCount = 5;
-      titleSize = 70;
-    }
+    lvlCheck(item);
   });
   selectContainer.append(templateSelect);
 });
@@ -192,14 +196,18 @@ function clearGrid() {
     Array(cellCount).fill(0)
   );
 }
+function showMessage(message) {
+  const helpParagraf = document.createElement('p');
+  helpParagraf.className = 'helpMessage';
+  helpParagraf.innerText = message;
+  canvasContainer.appendChild(helpParagraf);
+  setTimeout(() => canvasContainer.removeChild(helpParagraf), 3000);
+}
 const handleMouseClick = (event) => {
   if (!matrix) {
-    const helpParagraf = document.createElement('p');
-    helpParagraf.className = 'helpMessage';
-    helpParagraf.innerText =
-      'First choose the option you want to solve and then press the start button';
-    canvasContainer.appendChild(helpParagraf);
-    setTimeout(() => canvasContainer.removeChild(helpParagraf), 3000);
+    showMessage(
+      'First choose the option you want to solve and then press the start button'
+    );
   }
   if (isGameBegin) {
     if (!isTimerBegin) {
@@ -351,14 +359,28 @@ saveGameBtn.addEventListener('click', () => {
   localStorage.setItem('saved_game_quest', JSON.stringify(solutionArr));
 });
 continueLastGameBtn.addEventListener('click', () => {
-  stopTimer();
-  isGameBegin = true;
-  solutionArr = JSON.parse(localStorage.getItem('saved_game_quest'));
-  gridColors = JSON.parse(localStorage.getItem('saved_game_answ'));
-  [cellSize, titleSize, minutes, seconds, matrix] = JSON.parse(
-    localStorage.getItem('saved_game')
-  );
-  render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
+  const solutionArrSaved = localStorage.getItem('saved_game_quest');
+  const gridColorsSaved = localStorage.getItem('saved_game_answ');
+  if (solutionArrSaved && gridColorsSaved) {
+    stopTimer();
+    isGameBegin = true;
+    solutionArr = JSON.parse(solutionArrSaved);
+    gridColors = JSON.parse(gridColorsSaved);
+    [cellSize, titleSize, minutes, seconds, matrix] = JSON.parse(
+      localStorage.getItem('saved_game')
+    );
+    render(
+      canvas,
+      context,
+      cellSize,
+      gridColors,
+      titleSize,
+      solutionArr,
+      theme
+    );
+  } else {
+    showMessage('No game saved yet');
+  }
 });
 document.addEventListener('DOMContentLoaded', () => {
   clickSoundL = new Audio('./assets/clickL.mp3');
@@ -397,16 +419,8 @@ randomGame.addEventListener('click', () => {
   const indexLvl = Math.floor(Math.random() * lvl.length);
   const indexGame = Math.floor(Math.random() * solutions[lvl[indexLvl]].length);
   matrix = `${lvl[indexLvl]} ${indexGame} ${Object.keys(solutions[lvl[indexLvl]][indexGame])}`;
-  if (lvl[indexLvl] === 'medium') {
-    cellCount = 10;
-    titleSize = 70;
-  } else if (lvl[indexLvl] === 'hard') {
-    cellCount = 15;
-    titleSize = 90;
-  } else {
-    cellCount = 5;
-    titleSize = 70;
-  }
+
+  lvlCheck(lvl[indexLvl]);
   StartGame(matrix);
 });
 
