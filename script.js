@@ -135,6 +135,12 @@ toggleCheckbox.addEventListener('change', () => {
     theme = 'light';
   }
   document.documentElement.dataset.theme = theme;
+  const body = document.querySelector('.bodyEl');
+  if (theme === 'dark') {
+    body.className = 'bodyEl backgroundDark';
+  } else {
+    body.className = 'bodyEl backgroundLight';
+  }
   render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
 });
 
