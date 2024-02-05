@@ -400,6 +400,7 @@ showResultsBtn.addEventListener('click', () => {
   } else {
     const message = document.createElement('p');
     message.innerText = 'no results yet';
+    modalContainer.append(message);
   }
   const closeBtn = document.createElement('button');
   closeBtn.className = 'closeBtn';
