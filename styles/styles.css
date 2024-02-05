@@ -71,6 +71,11 @@
   display: flex;
   flex-direction: column;
 }
+.btnContainerToggle {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 .selectContainer {
   display: flex;
   flex-direction: column;

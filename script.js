@@ -14,11 +14,12 @@ let minutes = 0;
 let seconds = 0;
 let timerInterval;
 const lvl = ['easy', 'medium', 'hard'];
-let matrix = '';
+let matrix = 'easy 0 arrow';
 let clickSoundL = null;
 let clickSoundR = null;
 let clickSoundApplause = null;
 let theme = 'light';
+let isSound = true;
 const resultsTemp = localStorage.getItem('results') || [];
 const results = resultsTemp.length > 0 ? JSON.parse(resultsTemp) : resultsTemp;
 
@@ -119,8 +120,17 @@ continueLastGameBtn.className = 'buttonEl';
 
 saveGameContainer.append(saveGameBtn, continueLastGameBtn);
 
-const toggleContainer = document.createElement('label');
-toggleContainer.className = 'toggleContainer';
+const toggleLabel = document.createElement('div');
+toggleLabel.className = 'btnContainerToggle';
+const paragraf = document.createElement('p');
+paragraf.innerText = 'Theme';
+const paragraf2 = document.createElement('p');
+paragraf2.innerText = 'Sound';
+toggleLabel.append(paragraf, paragraf2);
+const toggleContainer = document.createElement('div');
+toggleContainer.className = 'btnContainerToggle';
+const toggleContainerTheme = document.createElement('label');
+toggleContainerTheme.className = 'toggleContainer';
 const toggleCheckbox = document.createElement('input');
 toggleCheckbox.className = 'toggleChackBox';
 toggleCheckbox.type = 'checkbox';
@@ -143,8 +153,27 @@ toggleCheckbox.addEventListener('change', () => {
   }
   render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
 });
+const toggleContainerSound = document.createElement('label');
+toggleContainerSound.className = 'toggleContainer';
+const toggleCheckbox2 = document.createElement('input');
+toggleCheckbox2.className = 'toggleChackBox';
+toggleCheckbox2.type = 'checkbox';
+const toggleSlider2 = document.createElement('span');
+toggleSlider2.className = 'toggleSlider';
+toggleCheckbox2.addEventListener('change', () => {
+  if (toggleCheckbox2.checked) {
+    toggleSlider2.classList.add('checked');
+    isSound = false;
+  } else {
+    toggleSlider2.classList.remove('checked');
+    isSound = true;
+  }
+});
 
-toggleContainer.append(toggleCheckbox, toggleSlider);
+toggleContainerTheme.append(toggleCheckbox, toggleSlider);
+toggleContainerSound.append(toggleCheckbox2, toggleSlider2);
+toggleContainer.append(toggleContainerTheme, toggleContainerSound);
+
 const randomGame = document.createElement('button');
 randomGame.textContent = 'Start random game';
 randomGame.className = 'buttonEl';
@@ -155,6 +184,7 @@ controlsContainer.append(
   selectContainer,
   showContainer,
   saveGameContainer,
+  toggleLabel,
   toggleContainer,
   randomGame
 );
@@ -247,7 +277,7 @@ const handleMouseClick = (event) => {
         gridColors[gridX][gridY] = 0;
       }
     }
-    if (clickSoundL !== null) {
+    if (clickSoundL !== null && isSound) {
       clickSoundL.play();
     }
     render(
@@ -295,7 +325,7 @@ const handleMouseClick = (event) => {
       document.body.appendChild(modalContainer);
       isGameBegin = false;
       stopTimer();
-      if (clickSoundApplause !== null) {
+      if (clickSoundApplause !== null && isSound) {
         clickSoundApplause.play();
       }
       showAnswerBtn.disabled = true;
@@ -321,7 +351,7 @@ const handleContextMenu = (event) => {
         gridColors[gridX][gridY] = 0;
       }
     }
-    if (clickSoundR !== null) {
+    if (clickSoundR !== null && isSound) {
       clickSoundR.play();
     }
     render(
@@ -468,8 +498,18 @@ randomGame.addEventListener('click', () => {
   matrix = `${lvl[indexLvl]} ${indexGame} ${Object.keys(solutions[lvl[indexLvl]][indexGame])}`;
 
   lvlCheck(lvl[indexLvl]);
+  selectors[indexLvl][indexGame + 1].selected = true;
+  function clearSelectors() {
+    selectors.forEach((el) => {
+      const opt = el;
+      if (el !== selectors[indexLvl]) {
+        opt.value = '';
+      }
+    });
+  }
+  clearSelectors();
   StartGame(matrix);
 });
-
-clearGrid();
+selectors[0][1].selected = true;
+StartGame(matrix);
 render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
