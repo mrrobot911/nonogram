@@ -260,7 +260,10 @@ const handleMouseClick = (event) => {
       localStorage.setItem('results', JSON.stringify(tempResults));
 
       const modalContainer = document.createElement('div');
-      modalContainer.className = 'modalContainer';
+      const wrapper = document.createElement('div');
+      wrapper.className = 'wrapper';
+      const modalEl = document.createElement('div');
+      modalEl.className = 'modalContainer';
       const message = document.createElement('p');
       message.innerText = `Great! You have solved the nonogram in ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} seconds!`;
       const closeBtn = document.createElement('button');
@@ -274,7 +277,13 @@ const handleMouseClick = (event) => {
         resetTimer();
         isTimerBegin = false;
       });
-      modalContainer.append(message, closeBtn);
+      wrapper.addEventListener('click', () => {
+        document.body.removeChild(modalContainer);
+        resetTimer();
+        isTimerBegin = false;
+      });
+      modalEl.append(message, closeBtn);
+      modalContainer.append(wrapper, modalEl);
       document.body.appendChild(modalContainer);
       isGameBegin = false;
       stopTimer();
@@ -409,18 +418,21 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 showResultsBtn.addEventListener('click', () => {
   const modalContainer = document.createElement('div');
-  modalContainer.className = 'modalContainer';
+  const wrapper = document.createElement('div');
+  wrapper.className = 'wrapper';
+  const modalEl = document.createElement('div');
+  modalEl.className = 'modalContainer';
   if (results.length > 0) {
     results.sort();
     results.forEach((el, i) => {
       const message = document.createElement('p');
       message.innerText = `${i + 1}. difficult: ${el[1]}; name: ${el[2]}; time: ${String(Math.floor(el[0] / 60)).padStart(2, '0')}:${String(el[0] % 60).padStart(2, '0')}`;
-      modalContainer.append(message);
+      modalEl.append(message);
     });
   } else {
     const message = document.createElement('p');
     message.innerText = 'no results yet';
-    modalContainer.append(message);
+    modalEl.append(message);
   }
   const closeBtn = document.createElement('button');
   closeBtn.className = 'closeBtn';
@@ -428,12 +440,18 @@ showResultsBtn.addEventListener('click', () => {
   <path d="M2 16.8507L17 2.00001" stroke="#0C0C0E" stroke-width="3"/>
   <path d="M2 2.14928L17 17" stroke="#0C0C0E" stroke-width="3"/>
   </svg>`;
+  wrapper.addEventListener('click', () => {
+    document.body.removeChild(modalContainer);
+    resetTimer();
+    isTimerBegin = false;
+  });
   closeBtn.addEventListener('click', () => {
     document.body.removeChild(modalContainer);
     resetTimer();
     isTimerBegin = false;
   });
-  modalContainer.append(closeBtn);
+  modalEl.append(closeBtn);
+  modalContainer.append(wrapper, modalEl);
   document.body.appendChild(modalContainer);
 });
 randomGame.addEventListener('click', () => {
