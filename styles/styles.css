@@ -204,6 +204,10 @@
     flex-direction: row;
     gap: 20px;
   }
+  .helpMessage {
+    top: 30%;
+    left: 50%;
+  }
 }
 @media (max-width: 620px) {
   .canvasContainer {
