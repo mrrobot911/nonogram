@@ -253,6 +253,15 @@ function showMessage(message) {
   canvasContainer.appendChild(helpParagraf);
   setTimeout(() => canvasContainer.removeChild(helpParagraf), 3000);
 }
+function clearSelectors(index) {
+  selectors.forEach((el) => {
+    const opt = el;
+    if (el !== selectors[index]) {
+      opt.value = '';
+    }
+  });
+}
+
 const handleMouseClick = (event) => {
   if (!matrix) {
     showMessage(
@@ -435,6 +444,10 @@ continueLastGameBtn.addEventListener('click', () => {
     [cellSize, titleSize, minutes, seconds, matrix] = JSON.parse(
       localStorage.getItem('saved_game')
     );
+    const index1 = lvl.indexOf(matrix.split(' ')[0]);
+    const index2 = parseInt(matrix.split(' ')[1], 10);
+    selectors[index1][index2 + 1].selected = true;
+    clearSelectors(index1);
     render(
       canvas,
       context,
@@ -499,15 +512,7 @@ randomGame.addEventListener('click', () => {
 
   lvlCheck(lvl[indexLvl]);
   selectors[indexLvl][indexGame + 1].selected = true;
-  function clearSelectors() {
-    selectors.forEach((el) => {
-      const opt = el;
-      if (el !== selectors[indexLvl]) {
-        opt.value = '';
-      }
-    });
-  }
-  clearSelectors();
+  clearSelectors(indexLvl);
   StartGame(matrix);
 });
 selectors[0][1].selected = true;
