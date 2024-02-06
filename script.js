@@ -21,7 +21,7 @@ let clickSoundApplause = null;
 let theme = 'light';
 let isSound = true;
 const resultsTemp = localStorage.getItem('results') || [];
-const results = resultsTemp.length > 0 ? JSON.parse(resultsTemp) : resultsTemp;
+let results = resultsTemp.length > 0 ? JSON.parse(resultsTemp) : resultsTemp;
 
 function lvlCheck(item) {
   if (item === 'medium') {
@@ -315,6 +315,7 @@ const handleMouseClick = (event) => {
       const solwedGame = matrix.split(' ');
       const solwedGameTime = minutes * 60 + seconds;
       tempResults.push([solwedGameTime, solwedGame[0], solwedGame[2]]);
+      results = tempResults;
       localStorage.setItem('results', JSON.stringify(tempResults));
 
       const modalContainer = document.createElement('div');
@@ -481,7 +482,7 @@ showResultsBtn.addEventListener('click', () => {
   const modalEl = document.createElement('div');
   modalEl.className = 'modalContainer';
   if (results.length > 0) {
-    results.sort((a, b) => a - b);
+    results.sort((a, b) => Number(a[0]) - Number(b[0]));
     results.forEach((el, i) => {
       const message = document.createElement('p');
       message.innerText = `${i + 1}. difficult: ${el[1]}; name: ${el[2]}; time: ${String(Math.floor(el[0] / 60)).padStart(2, '0')}:${String(el[0] % 60).padStart(2, '0')}`;
@@ -505,8 +506,6 @@ showResultsBtn.addEventListener('click', () => {
   });
   closeBtn.addEventListener('click', () => {
     document.body.removeChild(modalContainer);
-    resetTimer();
-    isTimerBegin = false;
   });
   modalEl.append(closeBtn);
   modalContainer.append(wrapper, modalEl);
