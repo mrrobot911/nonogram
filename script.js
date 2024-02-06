@@ -475,7 +475,7 @@ showResultsBtn.addEventListener('click', () => {
   const modalEl = document.createElement('div');
   modalEl.className = 'modalContainer';
   if (results.length > 0) {
-    results.sort();
+    results.sort((a, b) => a - b);
     results.forEach((el, i) => {
       const message = document.createElement('p');
       message.innerText = `${i + 1}. difficult: ${el[1]}; name: ${el[2]}; time: ${String(Math.floor(el[0] / 60)).padStart(2, '0')}:${String(el[0] % 60).padStart(2, '0')}`;
