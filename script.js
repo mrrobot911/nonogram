@@ -444,7 +444,7 @@ continueLastGameBtn.addEventListener('click', () => {
   const solutionArrSaved = localStorage.getItem('saved_game_quest');
   const gridColorsSaved = localStorage.getItem('saved_game_answ');
   if (solutionArrSaved && gridColorsSaved) {
-    stopTimer();
+    resturtTimer();
     isGameBegin = true;
     solutionArr = JSON.parse(solutionArrSaved);
     gridColors = JSON.parse(gridColorsSaved);
@@ -519,6 +519,7 @@ randomGame.addEventListener('click', () => {
   lvlCheck(lvl[indexLvl]);
   selectors[indexLvl][indexGame + 1].selected = true;
   clearSelectors(indexLvl);
+  resturtTimer();
   StartGame(matrix);
 });
 selectors[0][1].selected = true;
