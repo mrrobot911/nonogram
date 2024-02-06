@@ -92,6 +92,7 @@ lvl.forEach((item, i) => {
       if (el !== selectors[i]) {
         opt.value = '';
       }
+      playBtn.disabled = false;
     });
     matrix = selectors[i].value;
     lvlCheck(item);
@@ -261,6 +262,16 @@ function clearSelectors(index) {
     }
   });
 }
+function resturtTimer() {
+  const isWinGame = isMatrixEqual(gridColors, solutionArr);
+  if (!isWinGame) {
+    isGameBegin = true;
+    isTimerBegin = false;
+    clearGrid();
+  }
+  stopTimer();
+  resetTimer();
+}
 
 const handleMouseClick = (event) => {
   if (!matrix) {
@@ -401,17 +412,12 @@ canvas.addEventListener('contextmenu', handleContextMenu);
 window.addEventListener('resize', updateCanvasSize);
 
 playBtn.addEventListener('click', () => {
+  resturtTimer();
+  playBtn.disabled = true;
   StartGame(matrix);
 });
 restartBtn.addEventListener('click', () => {
-  const isWinGame = isMatrixEqual(gridColors, solutionArr);
-  if (!isWinGame) {
-    isGameBegin = true;
-    isTimerBegin = false;
-    clearGrid();
-  }
-  stopTimer();
-  resetTimer();
+  resturtTimer();
   render(canvas, context, cellSize, gridColors, titleSize, solutionArr, theme);
 });
 showAnswerBtn.addEventListener('click', () => {
