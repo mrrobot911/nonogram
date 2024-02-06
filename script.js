@@ -444,6 +444,7 @@ continueLastGameBtn.addEventListener('click', () => {
     [cellSize, titleSize, minutes, seconds, matrix] = JSON.parse(
       localStorage.getItem('saved_game')
     );
+    updateTimerDisplay();
     const index1 = lvl.indexOf(matrix.split(' ')[0]);
     const index2 = parseInt(matrix.split(' ')[1], 10);
     selectors[index1][index2 + 1].selected = true;
