@@ -148,6 +148,8 @@
 }
 .buttonEl:disabled {
   cursor: default;
+  background-color: rgb(190, 190, 190);
+  border: 2px solid rgb(0, 0, 0);
 }
 .toggleChackBox {
   display: none;
